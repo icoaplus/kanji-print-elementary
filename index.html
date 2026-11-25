@@ -22,7 +22,89 @@
 .compact-actions .primary{min-height:48px}
 .compact-actions button span{display:block;white-space:nowrap}
 
-.review-panel{margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid #d6dfed}.review-panel h2{font-size:17px;margin:0 0 12px;padding:8px 10px;color:#264575;background:#e4edf9;border-radius:6px}.review-panel select{display:block;width:100%;min-height:42px;margin:4px 0 10px;padding:7px;border:1px solid #becce0;border-radius:7px;background:white;color:#203654}.open-actions{display:grid;gap:8px}.open-actions>button{text-align:left;font-weight:600}.open-actions .counts{margin-top:0}.open-actions .counts label{min-width:0}.open-actions .helper{margin:4px 0 8px}[hidden]{display:none!important}</style></head><body><header><div><h1>漢字プリント作成</h1><span>１〜６年・月別版 ／ A4横・縦書き</span></div><div class="print-actions"><button id="print" class="primary">印刷</button><button id="pdf" class="primary">PDFを作る</button></div></header><main><aside class="controls"><section class="settings">
+.review-panel{margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid #d6dfed}.review-panel h2{font-size:17px;margin:0 0 12px;padding:8px 10px;color:#264575;background:#e4edf9;border-radius:6px}.review-panel select{display:block;width:100%;min-height:42px;margin:4px 0 10px;padding:7px;border:1px solid #becce0;border-radius:7px;background:white;color:#203654}.open-actions{display:grid;gap:8px}.open-actions>button{text-align:left;font-weight:600}.open-actions .counts{margin-top:0}.open-actions .counts label{min-width:0}.open-actions .helper{margin:4px 0 8px}[hidden]{display:none!important}
+/* Independent editor/preview scrolling. Preview scaling never changes printed dimensions. */
+.preview-zoom{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin:0 0 10px}
+.preview-zoom button{min-height:40px;padding:6px 12px;font-size:14px;white-space:nowrap}
+.preview-zoom output{min-width:54px;text-align:center;font-size:14px;font-variant-numeric:tabular-nums}
+.preview-zoom #previewFit[aria-pressed=true]{background:#e4edf9;border-color:#2b5193;color:#243d61}
+@media screen{
+ .preview-viewport{overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch;border-radius:12px;background:#dce4ef;min-width:0}
+ .preview-viewport .paper-wrap{width:max-content;min-width:100%;padding:14px;background:transparent;border-radius:0}
+ #paper{width:var(--preview-paper-width,800px);max-width:none;margin:0 auto;background:transparent;box-shadow:none}
+ #paper .print-page{background:white;box-shadow:0 5px 18px #223d5826}
+ #paper svg{display:block;width:100%;height:auto}
+ #pdfResult{max-height:22dvh;overflow:auto}
+}
+@media screen and (min-width:761px){
+ html,body{height:100%;overflow:hidden}
+ body{height:100dvh;display:flex;flex-direction:column}
+ header{flex:0 0 auto}
+ main{flex:1 1 0;min-height:0;width:100%;margin:0 auto;align-items:stretch;overflow:hidden}
+ .controls{height:100%;min-height:0;overflow:auto;overscroll-behavior:contain;-webkit-overflow-scrolling:touch}
+ .preview{position:static;top:auto;align-self:stretch;height:100%;min-height:0;display:flex;flex-direction:column;overflow:hidden}
+ .previewbar,.preview-zoom{flex:0 0 auto}
+ .previewbar{margin-bottom:8px}
+ .preview-viewport{flex:1 1 0;min-height:0}
+ .preview>.helper{flex:0 0 auto;margin:5px 0;font-size:12px;line-height:1.5}
+ .preview>#status{min-height:0}
+ #pdfResult{flex:0 0 auto}
+}
+@media screen and (max-width:760px){
+ .preview-viewport{height:55vh;height:55dvh;min-height:220px}
+ .preview-zoom{margin-bottom:8px}
+}
+@media print{
+ .preview-zoom{display:none!important}
+ .preview-viewport{display:contents!important;height:auto!important;overflow:visible!important}
+ .paper-wrap{width:auto!important;min-width:0!important;overflow:visible!important}
+ #paper{width:297mm!important;max-width:none!important}
+ #paper .print-page{box-shadow:none!important}
+}
+
+/* Give the paper more room, with a reversible preview-focused view. */
+@media screen and (min-width:761px){
+ header{min-height:62px;padding:8px 16px;gap:12px}
+ header h1{font-size:20px;margin:0}
+ header>div>span{font-size:13px}
+ header .primary{min-height:40px;padding:7px 16px}
+ main{max-width:none;padding:12px;gap:12px;grid-template-columns:clamp(300px,29vw,360px) minmax(0,1fr)}
+ .preview{display:grid;grid-template-columns:minmax(130px,1fr) auto;grid-template-rows:auto minmax(0,1fr) auto auto auto;column-gap:8px;row-gap:6px}
+ .previewbar{grid-column:1;grid-row:1;display:block;margin:0;min-width:0;font-size:13px;line-height:1.4}
+ .previewbar span{display:block;font-size:12px;line-height:1.3}
+ .preview-zoom{grid-column:2;grid-row:1;justify-content:flex-end;flex-wrap:nowrap;margin:0;gap:4px}
+ .preview-zoom button{font-size:13px;min-height:36px;padding:4px 8px}
+ .preview-zoom output{min-width:42px;font-size:13px}
+ .preview-viewport{grid-column:1/-1;grid-row:2;min-height:0}
+ #pdfResult{grid-column:1/-1;grid-row:3}
+ .preview>#status{grid-column:1/-1;grid-row:4}
+ .preview>.helper:last-child{grid-column:1/-1;grid-row:5;font-size:11px;margin:0}
+ .preview>#status:empty,#pdfResult:empty{display:none}
+}
+@media screen{
+ body.preview-focus>header{display:none}
+ body.preview-focus{height:100dvh;overflow:hidden}
+ body.preview-focus main{height:100%;max-width:none;padding:8px;display:block;overflow:hidden}
+ body.preview-focus .controls{display:none}
+ body.preview-focus .preview{position:static;order:0;height:100%;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) auto;grid-template-rows:auto minmax(0,1fr) auto auto auto;gap:6px}
+ body.preview-focus .previewbar{grid-column:1;grid-row:1;margin:0}
+ body.preview-focus .preview-zoom{grid-column:2;grid-row:1;margin:0}
+ body.preview-focus .preview-viewport{grid-column:1/-1;grid-row:2;height:auto;min-height:0}
+ body.preview-focus #pdfResult{grid-column:1/-1;grid-row:3}
+ body.preview-focus #status{grid-column:1/-1;grid-row:4}
+ body.preview-focus .preview>.helper:last-child{grid-column:1/-1;grid-row:5;margin:0;font-size:11px}
+ body.preview-focus #status:empty,body.preview-focus #pdfResult:empty{display:none}
+}
+@media screen and (max-width:760px){
+ body.preview-focus .preview{grid-template-columns:minmax(0,1fr);grid-template-rows:auto auto minmax(0,1fr) auto auto auto}
+ body.preview-focus .previewbar{grid-column:1;grid-row:1}
+ body.preview-focus .preview-zoom{grid-column:1;grid-row:2}
+ body.preview-focus .preview-viewport{grid-column:1;grid-row:3}
+ body.preview-focus #pdfResult{grid-column:1;grid-row:4}
+ body.preview-focus #status{grid-column:1;grid-row:5}
+ body.preview-focus .preview>.helper:last-child{grid-column:1;grid-row:6}
+}
+</style></head><body><header><div><h1>漢字プリント作成</h1><span>１〜６年・月別版 ／ A4横・縦書き</span></div><div class="print-actions"><button id="print" class="primary">印刷</button><button id="pdf" class="primary">PDFを作る</button></div></header><main><aside class="controls"><section class="settings">
 <div class="review-panel"><h2>◆ ファイルを開く</h2>
 <div class="open-actions">
 <button id="newWorksheet" type="button">新規作成</button>
@@ -52,8 +134,14 @@
 <p class="helper">新出順の原本は上書きできません。編集したものは別名で保存できます。</p>
 <div class="checks compact-actions"><button id="deleteSheet"><span>保存を削除</span></button><button id="exportAllSaved"><span>保存したプリントを</span><span>まとめてダウンロード</span></button></div>
 <p id="saveStatus" class="helper" aria-live="polite"></p></div>
-<div class="review-panel"><h2>◆ 印刷設定</h2><label>ファイル名<input id="unitName" placeholder="例：春のようす" maxlength="30"></label><div class="checks"><label><input id="printUnit" type="checkbox" checked>ファイル名を印刷する</label></div><div class="counts"><label>学年<input id="grade" placeholder="例：２年" maxlength="10"></label><label>学年・ページなど<input id="marker" placeholder="例：1/30" maxlength="10"></label></div><div class="checks"><label><input id="printMeta" type="checkbox" checked>学年・ページなどを印刷する</label><label><input id="printName" type="checkbox" checked>なまえを印刷する</label></div><label style="margin-top:14px">名前（空欄なら手書き用）<input id="studentName" placeholder="名前" maxlength="20" autocomplete="off"></label><label>フォント<select id="fontChoice"><option value="ud">UD デジタル教科書体</option><option value="kyokasho">教科書体</option><option value="gothic">UD ゴシック体</option><option value="mincho">明朝体</option></select></label><p class="helper">端末にあるフォントを使用します。選んだ書体がない場合は代替書体になります。</p><label>印刷方法<select id="printMode"><option value="combined">１枚にまとめる</option><option value="separate">ファイルごとに続けて印刷</option></select></label></div>
-<div class="review-panel"><h2>◆ 問題設定</h2><div class="counts"><label>上半分の問題数<input id="upper" type="number" min="1" max="15" value="5"></label><label>下半分の問題数<input id="lower" type="number" min="0" max="15" value="5"></label></div><div class="checks" role="group" aria-label="印刷の段数"><label><input id="oneRow" type="checkbox">一段</label><label><input id="twoRows" type="checkbox" checked>二段</label></div><p class="helper">升目の上限は１段５問で25 mm、４問で30 mm、３問以下で35 mmです。６問以上や長い文では小さくなります。２段で升目が小さくなる場合は、印刷時に２枚に分けることがあります。</p><div class="checks"><label><input id="guides" type="checkbox" checked>升目に十字線</label><label><input id="divider" type="checkbox">上下の区切り線</label></div><label style="margin-top:14px">新出漢字（空欄にする漢字）<input id="newKanji" placeholder="例：北魚秋冬広食帰東西南" maxlength="200"></label><div class="checks"><label><input id="showKnownReadings" type="checkbox" checked>既習漢字のふりがなを表示する</label></div><div class="checks"><button id="clearAll">全部消す</button><button id="undoClear" hidden>消す前に戻す</button></div></div></section><section><div class="tabs" role="tablist" aria-label="編集する場所"><button id="topTab" role="tab" aria-selected="true" class="active">上半分</button><button id="bottomTab" role="tab" aria-selected="false">下半分</button></div><p class="helper">問題を入力し、下の文字を押して表示方法を選びます。</p><div id="questions"></div></section></aside><section class="preview"><div class="previewbar"><strong>A4の印刷配置</strong><span id="metrics"></span></div><div class="paper-wrap"><div id="paper"></div></div><div id="pdfResult" aria-live="polite"></div><p class="helper" id="status" aria-live="polite"></p><p class="helper">PDF保存は印刷画面で「PDFに保存」を選択。A4・横向き・倍率100％・余白なし・ヘッダーとフッターなしにしてください。</p></section></main><script>
+<div class="review-panel"><h2>◆ 印刷設定</h2><label>ファイル名<input id="unitName" placeholder="例：春のようす" maxlength="30"></label><div class="checks"><label><input id="printUnit" type="checkbox" checked>ファイル名を印刷する</label></div><div class="counts"><label>学年<input id="grade" placeholder="例：２年" maxlength="10"></label><label>学年・ページなど<input id="marker" placeholder="例：1/30" maxlength="10"></label></div><div class="checks"><label><input id="printMeta" type="checkbox" checked>学年・ページなどを印刷する</label><label><input id="printName" type="checkbox" checked>なまえを印刷する</label></div><label style="margin-top:14px">名前（空欄なら手書き用）<input id="studentName" placeholder="名前" maxlength="20" autocomplete="off"></label><label>フォント<select id="fontChoice"><option value="ud">UD デジタル 教科書体 NK</option><option value="ud_np">UD デジタル 教科書体 NP</option><option value="ud_n">UD デジタル 教科書体 N</option><option value="kyokasho">教科書体</option><option value="gothic">UD ゴシック体</option><option value="mincho">明朝体</option></select></label><p class="helper">Wordと揃える場合は、Wordのフォント名と同じNK・NP・Nを選んでください。端末にその書体がない場合は代替書体になります。</p><label>印刷方法<select id="printMode"><option value="combined">１枚にまとめる</option><option value="separate">ファイルごとに続けて印刷</option></select></label></div>
+<div class="review-panel"><h2>◆ 問題設定</h2><div class="counts"><label>上半分の問題数<input id="upper" type="number" min="1" max="15" value="5"></label><label>下半分の問題数<input id="lower" type="number" min="0" max="15" value="5"></label></div><div class="checks" role="group" aria-label="印刷の段数"><label><input id="oneRow" type="checkbox">一段</label><label><input id="twoRows" type="checkbox" checked>二段</label></div><p class="helper">升目の上限は１段５問で25 mm、４問で30 mm、３問以下で35 mmです。６問以上や長い文では小さくなります。２段で升目が小さくなる場合は、印刷時に２枚に分けることがあります。</p><div class="checks"><label><input id="guides" type="checkbox" checked>升目に十字線</label><label><input id="divider" type="checkbox">上下の区切り線</label></div><label style="margin-top:14px">新出漢字（空欄にする漢字）<input id="newKanji" placeholder="例：北魚秋冬広食帰東西南" maxlength="200"></label><div class="checks"><label><input id="showKnownReadings" type="checkbox" checked>既習漢字のふりがなを表示する</label></div><div class="checks"><button id="clearAll">全部消す</button><button id="undoClear" hidden>消す前に戻す</button></div></div></section><section><div class="tabs" role="tablist" aria-label="編集する場所"><button id="topTab" role="tab" aria-selected="true" class="active">上半分</button><button id="bottomTab" role="tab" aria-selected="false">下半分</button></div><p class="helper">問題を入力し、下の文字を押して表示方法を選びます。</p><div id="questions"></div></section></aside><section class="preview"><div class="previewbar"><strong>A4の印刷配置</strong><span id="metrics"></span></div><div class="preview-zoom" role="group" aria-label="プレビューの拡大・縮小">
+<button id="previewZoomOut" type="button" aria-label="プレビューを縮小">−</button>
+<output id="previewZoomPercent" aria-live="polite">100%</output>
+<button id="previewZoomIn" type="button" aria-label="プレビューを拡大">＋</button>
+<button id="previewFit" type="button" aria-pressed="true">全体表示</button>
+<button id="previewFocus" type="button" aria-pressed="false" title="編集欄を一時的に隠し、用紙を大きく確認します">大きく表示</button>
+</div><div id="previewViewport" class="preview-viewport" tabindex="0" role="region" aria-label="プリントのプレビュー。拡大時はスクロールできます"><div class="paper-wrap"><div id="paper"></div></div></div><div id="pdfResult" aria-live="polite"></div><p class="helper" id="status" aria-live="polite"></p><p class="helper">PDF保存は印刷画面で「PDFに保存」を選択。A4・横向き・倍率100％・余白なし・ヘッダーとフッターなしにしてください。</p></section></main><script>
 const {isKanji,hira,token,reconcile,visible,units,heightUnits,layout,paginateWorksheet,fontFamilies,worksheet}=(()=>{
 const isKanji=c=>/[\p{Script=Han}々]/u.test(c);
 const hira=s=>[...s].map(c=>{let n=c.codePointAt(0);return n>=0x30a1&&n<=0x30f6?String.fromCodePoint(n-0x60):c}).join('');
@@ -110,8 +198,8 @@ function paginateWorksheet(state){
   numberVisible:group.map(j=>state.numberVisible?.[j]!==false)}));
  return pages.every(p=>layout(p).box>=standardBox-.05)?pages:[state];
 }
-const fontFamilies={ud:"'UD デジタル 教科書体 N-R','UD Digi Kyokasho N-R','UD デジタル 教科書体 NP-R','BIZ UDGothic',sans-serif",kyokasho:"'イワタ学参新教科書体E','HG教科書体','Yu Kyokasho','UD Digi Kyokasho N-R',serif",gothic:"'BIZ UDGothic','BIZ UDPGothic','Yu Gothic',sans-serif",mincho:"'BIZ UDMincho','Yu Mincho','Hiragino Mincho ProN',serif"};
-function worksheet(state){const plan=layout(state),{box:s}=plan;const fam=fontFamilies[state.fontChoice]||fontFamilies.ud;let out=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 297 210" width="297mm" height="210mm" role="img" aria-label="A4漢字プリント"><rect width="297" height="210" fill="white"/><g fill="#111" font-family="${fam}">`;
+const fontFamilies={ud:"'UD デジタル 教科書体 NK','UD Digi Kyokasho NK','UD デジタル 教科書体 NK-R','UD Digi Kyokasho NK-R','UDDigiKyokashoNK-R',sans-serif",ud_np:"'UD デジタル 教科書体 NP','UD Digi Kyokasho NP','UD デジタル 教科書体 NP-R','UD Digi Kyokasho NP-R','UDDigiKyokashoNP-R',sans-serif",ud_n:"'UD デジタル 教科書体 N','UD Digi Kyokasho N','UD デジタル 教科書体 N-R','UD Digi Kyokasho N-R','UDDigiKyokashoN-R',sans-serif",kyokasho:"'イワタ学参新教科書体E','HG教科書体','Yu Kyokasho','UD Digi Kyokasho N-R',serif",gothic:"'BIZ UDGothic','BIZ UDPGothic','Yu Gothic',sans-serif",mincho:"'BIZ UDMincho','Yu Mincho','Hiragino Mincho ProN',serif"};
+function worksheet(state){const plan=layout(state),{box:s}=plan;const fam=fontFamilies[state.fontChoice]||fontFamilies.ud;let out=`<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 297 210" width="297mm" height="210mm" role="img" aria-label="A4漢字プリント"><rect width="297" height="210" fill="white"/><g fill="#111" font-family="${fam}" font-weight="400" font-style="normal">`;
 const txt=(text,x,y,size,extra='')=>`<text x="${x}" y="${y}" font-size="${size}" text-anchor="middle" dominant-baseline="central" ${extra}>${esc(text)}</text>`;
 // Explicit glyph placement also works in exported SVG and rasterized PDF.
 const verticalGlyph=(c,x,y,size)=>/[、。，．]/.test(c)?txt(c,x+size*.5,y-size*.5,size):txt(c,x,y,size,/[ー「」『』（）()［］【】〈〉《》]/.test(c)?`transform="rotate(90 ${x} ${y})"`:'');
@@ -133,7 +221,7 @@ function normalizeState(s){
  if(!s||!Array.isArray(s.questions)||s.questions.length!==30||!Number.isInteger(s.upper)||s.upper<1||s.upper>15||!Number.isInteger(s.lower)||s.lower<0||s.lower>15)throw Error('プリントの形式が正しくありません。');
  const questions=s.questions.map(q=>{if(!Array.isArray(q)||q.length>40)throw Error('問題は40文字以内にしてください。');return q.map(t=>{if(!t||typeof t.char!=='string'||[...t.char].length!==1||typeof t.reading!=='string'||t.reading.length>20||!['text','blank','kana'].includes(t.mode))throw Error('文字・読み・空欄の形式が正しくありません。');return {char:t.char,reading:t.reading,mode:t.mode==='kana'?'text':t.mode,showReading:t.showReading!==false,readingSource:typeof t.readingSource==='string'?t.readingSource:'imported',isNew:typeof t.isNew==='boolean'?t.isNew:t.mode==='blank'};})});
  const text=(k,max)=>typeof s[k]==='string'?s[k].slice(0,max):'';
- return {saveGroup:text('saveGroup',40),fontChoice:['ud','kyokasho','gothic','mincho'].includes(s.fontChoice)?s.fontChoice:'ud',printMode:s.printMode==='separate'?'separate':'combined',batch:Array.isArray(s.batch)?s.batch.slice(0,250).map(x=>({name:courseTitle(x.name),state:normalizeState({...x.state,batch:undefined})})):[],batchIndex:Number.isInteger(s.batchIndex)?s.batchIndex:0,unitName:courseTitle(text('unitName',100)),studentName:text('studentName',20),grade:text('grade',10),marker:text('marker',10),printUnit:s.printUnit!==false,printName:s.printName!==false,printMeta:s.printMeta!==false,upper:s.upper,lower:s.lower,rows:s.rows===1?1:2,guides:s.guides!==false,divider:s.divider===true,numberVisible:Array.from({length:30},(_,i)=>s.numberVisible?.[i]!==false),questions,showKnownReadings:s.showKnownReadings!==false,newKanji:text('newKanji',200),publisher:text('publisher',30),volume:text('volume',10),month:Number.isInteger(s.month)?s.month:null};
+ return {saveGroup:text('saveGroup',40),fontChoice:['ud','ud_np','ud_n','kyokasho','gothic','mincho'].includes(s.fontChoice)?s.fontChoice:'ud',printMode:s.printMode==='separate'?'separate':'combined',batch:Array.isArray(s.batch)?s.batch.slice(0,250).map(x=>({name:courseTitle(x.name),state:normalizeState({...x.state,batch:undefined})})):[],batchIndex:Number.isInteger(s.batchIndex)?s.batchIndex:0,unitName:courseTitle(text('unitName',100)),studentName:text('studentName',20),grade:text('grade',10),marker:text('marker',10),printUnit:s.printUnit!==false,printName:s.printName!==false,printMeta:s.printMeta!==false,upper:s.upper,lower:s.lower,rows:s.rows===1?1:2,guides:s.guides!==false,divider:s.divider===true,numberVisible:Array.from({length:30},(_,i)=>s.numberVisible?.[i]!==false),questions,showKnownReadings:s.showKnownReadings!==false,newKanji:text('newKanji',200),publisher:text('publisher',30),volume:text('volume',10),month:Number.isInteger(s.month)?s.month:null};
 }
 function parseWorksheetFile(data){
  const rows=data?.schema==='kanji-print-maker'&&data.version===1?data.sheets:Array.isArray(data)?data:data?.questions?[{name:data.unitName||'漢字プリント',state:data}]:null;
@@ -240,7 +328,7 @@ function saveDraft(){clearTimeout(draftTimer);draftTimer=setTimeout(()=>{try{loc
 state.questions=state.questions.map(q=>q.map(t=>t.mode==='kana'?{...t,mode:'text'}:t));
 let half=0,selected={question:0,char:0};
 let pdfUrl;
-function preview(){saveDraft();if(pdfUrl){URL.revokeObjectURL(pdfUrl);pdfUrl=null;$('pdfResult').replaceChildren()}captureBatch();const currentPages=paginateWorksheet(state),results=outputSheets().flatMap(paginateWorksheet).map(worksheet),result=worksheet(currentPages[0]);$('paper').innerHTML=results.map(r=>'<div class=print-page>'+r.svg+'</div>').join('');$('metrics').textContent=`${results.length}枚 ／ ${results.reduce((n,r)=>n+r.count,0)}問 ／ 編集中の升目 約${result.box.toFixed(1)}mm ／ ${result.single?'１段':'２段'}`;
+function preview(){saveDraft();if(pdfUrl){URL.revokeObjectURL(pdfUrl);pdfUrl=null;$('pdfResult').replaceChildren()}captureBatch();const currentPages=paginateWorksheet(state),results=outputSheets().flatMap(paginateWorksheet).map(worksheet),result=worksheet(currentPages[0]);$('paper').innerHTML=results.map(r=>'<div class=print-page>'+r.svg+'</div>').join('');updatePreviewSize();$('metrics').textContent=`${results.length}枚 ／ ${results.reduce((n,r)=>n+r.count,0)}問 ／ 編集中の升目 約${result.box.toFixed(1)}mm ／ ${result.single?'１段':'２段'}`;
 const missing=[];
 for(const group of layout(state).groups)for(const i of group){
  const chars=state.questions[i].filter(t=>isKanji(t.char)&&t.showReading!==false&&!t.reading.trim()).map(t=>t.char);
@@ -421,6 +509,57 @@ function restorePresetReadings(s){
 }
 restorePresetReadings(state);
 for(const page of state.batch||[])restorePresetReadings(page.state);
+
+// Fit one A4 landscape page to both the width and height of the preview area.
+let previewSizingMode='fit',previewManualScale=1,currentPreviewScale=1;
+function previewScaleForSize(width,height){
+ return Math.max(.001,Math.min(Math.max(1,width)/ (297*96/25.4),Math.max(1,height)/ (210*96/25.4)));
+}
+function updatePreviewSize(){
+ const viewport=$('previewViewport'),paper=$('paper');
+ if(!viewport||!paper)return;
+ const inset=28; // 14 px padding around the paper on each side.
+ const fit=previewScaleForSize(viewport.clientWidth-inset,viewport.clientHeight-inset);
+ currentPreviewScale=previewSizingMode==='fit'?fit:previewManualScale;
+ paper.style.setProperty('--preview-paper-width',(297*96/25.4*currentPreviewScale)+'px');
+ $('previewZoomPercent').textContent=Math.round(currentPreviewScale*100)+'%';
+ $('previewFit').setAttribute('aria-pressed',String(previewSizingMode==='fit'));
+ $('previewZoomOut').disabled=previewSizingMode==='manual'&&previewManualScale<=.1;
+ $('previewZoomIn').disabled=previewSizingMode==='manual'&&previewManualScale>=3;
+}
+function changePreviewZoom(delta){
+ previewManualScale=Math.max(.1,Math.min(3,Math.round((currentPreviewScale+delta)*100)/100));
+ previewSizingMode='manual';updatePreviewSize();
+}
+$('previewZoomOut').onclick=()=>changePreviewZoom(-.1);
+$('previewZoomIn').onclick=()=>changePreviewZoom(.1);
+$('previewFit').onclick=()=>{
+ previewSizingMode='fit';updatePreviewSize();
+ $('previewViewport').scrollTop=0;$('previewViewport').scrollLeft=0;
+};
+if(typeof ResizeObserver!=='undefined'){
+ const previewResizeObserver=new ResizeObserver(()=>updatePreviewSize());
+ previewResizeObserver.observe($('previewViewport'));
+}
+
+let previewFocusMode=false;
+function setPreviewFocus(enabled){
+ previewFocusMode=enabled;
+ document.body.classList.toggle('preview-focus',enabled);
+ $('previewFocus').textContent=enabled?'編集欄を戻す':'大きく表示';
+ $('previewFocus').setAttribute('aria-pressed',String(enabled));
+ previewSizingMode='fit';
+ updatePreviewSize();
+ $('previewViewport').scrollTop=0;$('previewViewport').scrollLeft=0;
+}
+$('previewFocus').onclick=()=>setPreviewFocus(!previewFocusMode);
+window.addEventListener('keydown',event=>{
+ if(event.key==='Escape'&&previewFocusMode)setPreviewFocus(false);
+});
+
+window.addEventListener('resize',updatePreviewSize);
+window.visualViewport?.addEventListener('resize',updatePreviewSize);
+
 syncFields();refreshSaved();renderQuestions();preview();
 
 </script></body></html>
